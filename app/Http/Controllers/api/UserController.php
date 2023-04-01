@@ -35,6 +35,12 @@ class UserController extends Controller
             return response()->json(['access_token' => $accessToken], 200);
         }
 
-        return StatusResource::make(false)->response()->setStatusCode(422);
+        return response()->json(StatusResource::make(false), 422);
+    }
+
+    public function logout(): Response|JsonResponse
+    {
+        Auth::logout();
+        return response()->json([], 204);
     }
 }

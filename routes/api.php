@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/login', [UserController::class, 'login']);
+Route::middleware('guest')->group(function () {
+    Route::post('register', [UserController::class, 'register']);
+    Route::post('login', [UserController::class, 'login']);
+});
+Route::get('logout', [UserController::class, 'logout'])->middleware('auth');
