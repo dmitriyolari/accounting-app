@@ -31,8 +31,11 @@ class UserController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            $accessToken = $user->createToken('accessToken')->plainTextToken;
-            return response()->json(['access_token' => $accessToken], 200);
+            $accessToken = $user->tokens()->first();
+            if (!$accessToken) {
+                $accessToken = $user->createToken('accessToken')->plainTextToken;
+            }
+            return response()->json(['access_token' => $accessToken->token], 200);
         }
 
         return response()->json(StatusResource::make(false), 422);
