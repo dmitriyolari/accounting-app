@@ -9,6 +9,7 @@ use App\Http\Requests\User\UserCreateRequest;
 use App\Http\Requests\User\UserLoginRequest;
 use App\Http\Resources\StatusResource;
 use App\Http\Resources\User\UserResource;
+use App\Models\User;
 use App\Services\UserCreateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -30,12 +31,14 @@ class UserController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+            /** @var User $user */
             $user = Auth::user();
-            $accessToken = $user->tokens()->first();
+            $accessTokenCollection = $user->tokens()->first();
+            $accessToken = $accessTokenCollection->token;
             if (!$accessToken) {
                 $accessToken = $user->createToken('accessToken')->plainTextToken;
             }
-            return response()->json(['access_token' => $accessToken->token], 200);
+            return response()->json(['access_token' => $accessToken], 200);
         }
 
         return response()->json(StatusResource::make(false), 422);
